@@ -66,6 +66,8 @@ def login(s, headers, username, password):
     data['username'] = username
     data['password'] = password
     r = s.post(url=login_url, headers=headers, data=data)
+    # 增加等待时间，让数据接收完毕
+    time.sleep(5)
     return r.text
 
 
@@ -74,6 +76,8 @@ def get_student_info(s, headers):
     student_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/toApply.do'
     r = s.get(url=student_info_url, headers=headers)
     # print(r.text)
+    # 增加等待时间，让数据接收完毕
+    time.sleep(10)
     return r.text
 
 
@@ -130,6 +134,8 @@ def sent_info(s, headers, data):
     sent_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/saveApply.do'
     r = s.post(url=sent_info_url, headers=headers, data=data)
     # print(r.text)
+    # 增加等待时间，让数据接收完毕
+    time.sleep(5)
     print(r.status_code)
 
 
@@ -169,9 +175,12 @@ def main():
         for i in range(sum):
             print('')
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Mobile Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Mobile Safari/537.36',
+                'Connection': 'close',
             }
-            s = requests.Session()
+            s = requests.session()
+            # print(s)
+            # print(headers)
             state = login(s, headers, username[i], password[i])
             if state == 'success':
                 print('用户', name[i], username[i], '登录成功')
@@ -193,8 +202,8 @@ def main():
                 # print(userEmail[i])
                 # send_rusult(text, userEmail[i])
             finished += 1
-            # 增大休眠间隔，github访问速度慢
-            time.sleep(random.randint(10, 30))
+            # 增大等待间隔，github访问速度慢
+            time.sleep(random.randint(10, 40))
     finally:
         text = '应报:' + str(sum) + ' 本次上报:' + str(finished) + ' 今日已上报:' + str(reported)
         print('---------------------------')
