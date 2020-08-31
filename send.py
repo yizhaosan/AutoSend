@@ -171,6 +171,14 @@ def main():
     print('---------------------------\n')
     finished = 0
     reported = 0
+    # 发送给用户的邮件信息
+    userString = []
+    # 发送给admin的邮件信息
+    adminString = []
+
+    adminString.append('---------------------------')
+    adminString.append('账号密码读取成功，共' + str(sum) + '人')
+    adminString.append('---------------------------' + '\n')
     try:
         for i in range(sum):
             print('')
@@ -184,31 +192,54 @@ def main():
             state = login(s, headers, username[i], password[i])
             if state == 'success':
                 print('用户', name[i], username[i], '登录成功')
+                # 记录用户登录成功，添加到userString和adminString
+                text = '用户 ' + str(name[i]) + str(username[i]) + '登录成功'
+                userString.append(text)
+                adminString.append(text)
             else:
-                print('用户', name[i], username[i], '密码错误，登录失败\n')
+                print('用户', name[i], username[i], '密码错误，登录失败')
+                # 记录用户登录失败，添加到userString和adminString
+                text = '用户 ' + str(name[i]) + str(username[i]) + '密码错误，登录失败'
+                userString.append(text)
+                adminString.append(text)
+                # 将登录失败信息 邮件发送给用户
+                send_rusult('\n'.join(userString), userEmail[i])
                 continue
             html = get_student_info(s, headers)
             try:
                 data = student_info_parse(html)
                 sent_info(s, headers, data)
+                # 记录用户上报成功，添加到userString和adminString
                 text = '用户 ' + name[i] + '-' + str(username[i]) + ' 上报成功'
                 print(text)
+                userString.append(text)
+                adminString.append(text + '\n')
                 # print(userEmail[i])
                 # send_rusult(text, userEmail[i])
+                # 将用户上报成功信息，邮件发送给用户
+                send_rusult('\n'.join(userString), userEmail[i])
             except:
                 text = '用户 ' + name[i] + '-' + str(username[i]) + ' 今日已上报'
-                reported += 1
                 print(text)
+                adminString.append(text + '\n')
+                reported += 1
                 # print(userEmail[i])
                 # send_rusult(text, userEmail[i])
             finished += 1
             # 增大等待间隔，github访问速度慢
             time.sleep(random.randint(10, 40))
+            # time.sleep(random.randint(1, 10))
     finally:
         text = '应报:' + str(sum) + ' 本次上报:' + str(finished) + ' 今日已上报:' + str(reported)
+        adminString.append('---------------------------')
+        adminString.append(text)
+        adminString.append('---------------------------')
+        # print('\n'.join(adminString))
+
         print('---------------------------')
         print(text)
-        send_rusult(text, 'yizhaosan@qq.com')
+        # send_rusult(text, 'yizhaosan@qq.com')
+        send_rusult('\n'.join(adminString), 'yizhaosan@qq.com')
         print('---------------------------\n')
 
 
