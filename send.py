@@ -77,7 +77,7 @@ def get_student_info(s, headers):
     r = s.get(url=student_info_url, headers=headers)
     # print(r.text)
     # 增加等待时间，让数据接收完毕
-    time.sleep(10)
+    time.sleep(20)
     return r.text
 
 
@@ -135,7 +135,7 @@ def sent_info(s, headers, data):
     r = s.post(url=sent_info_url, headers=headers, data=data)
     # print(r.text)
     # 增加等待时间，让数据接收完毕
-    time.sleep(5)
+    time.sleep(20)
     print(r.status_code)
 
 
