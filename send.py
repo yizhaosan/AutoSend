@@ -6,7 +6,6 @@ import datetime
 from email.mime.text import MIMEText
 import smtplib
 import random
-import numpy as np
 
 
 # 从xlsx文件中读取数据
