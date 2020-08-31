@@ -193,7 +193,8 @@ def main():
                 # print(userEmail[i])
                 # send_rusult(text, userEmail[i])
             finished += 1
-            time.sleep(random.randint(1, 20))
+            # 增大休眠间隔，github访问速度慢
+            time.sleep(random.randint(10, 30))
     finally:
         text = '应报:' + str(sum) + ' 本次上报:' + str(finished) + ' 今日已上报:' + str(reported)
         print('---------------------------')
