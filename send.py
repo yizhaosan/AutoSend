@@ -187,6 +187,7 @@ def main():
                 'Connection': 'close',
             }
             s = requests.session()
+            s.keep_alive = False
             # print(s)
             # print(headers)
             state = login(s, headers, username[i], password[i])
