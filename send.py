@@ -222,6 +222,9 @@ def main():
                 adminString.append(text)
                 # 将登录失败信息 邮件发送给用户
                 send_rusult('\n'.join(userString), userEmail[i])
+                # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
+                # print('userString:---------  : ', userString)
+                userString.clear()
                 continue
             html = get_student_info(s, headers)
             try:
@@ -240,6 +243,10 @@ def main():
                     # send_rusult(text, userEmail[i])
                     # 将用户上报成功信息，邮件发送给用户
                     send_rusult('\n'.join(userString), userEmail[i])
+                    # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
+                    # print('userString:---------  : ', userString)
+                    userString.clear()
+                    # 本次上报人数和今日已上报人数统计
                     reported += 1
                     finished += 1
             except:
@@ -252,7 +259,11 @@ def main():
                     adminString.append(text + '\n')
                     # print(userEmail[i])
                     # send_rusult(text, userEmail[i])
+                    # 今日已上报统计
                     reported += 1
+            # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
+            # print('userString:---------  : ', userString)
+            userString.clear()
             # 增大等待间隔，github访问速度慢
             time.sleep(random.randint(10, 40))
             # time.sleep(random.randint(1, 10))
@@ -262,12 +273,14 @@ def main():
         adminString.append(text)
         adminString.append('---------------------------')
         # print('\n'.join(adminString))
-
         print('---------------------------')
         print(text)
         # send_rusult(text, 'yizhaosan@qq.com')
         send_rusult('\n'.join(adminString), 'yizhaosan@qq.com')
         print('---------------------------\n')
+        # 调用clear()方法，清空列表，避免其出现在下次的邮件中
+        # print('adminString:---------  : ', adminString)
+        userString.clear()
 
 
 if __name__ == "__main__":
