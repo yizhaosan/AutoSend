@@ -81,6 +81,15 @@ def get_student_info(s, headers):
     return r.text
 
 
+# 获取上报成功的html
+def get_success_send_info(s, headers):
+    success_send_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/main.do'
+    r = s.get(url=success_send_info_url, headers=headers)
+    # print(r.text)
+    time.sleep(20)
+    return r.text
+
+
 # 解析html,获得data数据
 def student_info_parse(html):
     bs = BeautifulSoup(html, 'lxml')
@@ -127,6 +136,14 @@ def student_info_parse(html):
     }
     # print(data)
     return data
+
+
+# 解析html，获取success_send_info数据
+def success_send_info_parse(html):
+    bs = BeautifulSoup(html, 'lxml')
+    text = bs.find('span', {"class": "normal-sm-tip green-warn fn-ml10"}).get_text()
+    # print(text)
+    return text
 
 
 # 向服务器post数据
@@ -210,23 +227,32 @@ def main():
             try:
                 data = student_info_parse(html)
                 sent_info(s, headers, data)
-                # 记录用户上报成功，添加到userString和adminString
-                text = '用户 ' + name[i] + '-' + str(username[i]) + ' 上报成功'
-                print(text)
-                userString.append(text)
-                adminString.append(text + '\n')
-                # print(userEmail[i])
-                # send_rusult(text, userEmail[i])
-                # 将用户上报成功信息，邮件发送给用户
-                send_rusult('\n'.join(userString), userEmail[i])
+                # 从网页中解析是否上报成功
+                html = get_success_send_info(s, headers)
+                msg = success_send_info_parse(html)
+                if msg == '今日已上报':
+                    # 记录用户上报成功，添加到userString和adminString
+                    text = '用户 ' + name[i] + '-' + str(username[i]) + ' 上报成功'
+                    print(text)
+                    userString.append(text)
+                    adminString.append(text + '\n')
+                    # print(userEmail[i])
+                    # send_rusult(text, userEmail[i])
+                    # 将用户上报成功信息，邮件发送给用户
+                    send_rusult('\n'.join(userString), userEmail[i])
+                    reported += 1
+                    finished += 1
             except:
-                text = '用户 ' + name[i] + '-' + str(username[i]) + ' 今日已上报'
-                print(text)
-                adminString.append(text + '\n')
-                reported += 1
-                # print(userEmail[i])
-                # send_rusult(text, userEmail[i])
-            finished += 1
+                # 从网页中解析是否上报成功
+                html = get_success_send_info(s, headers)
+                msg = success_send_info_parse(html)
+                if msg == '今日已上报':
+                    text = '用户 ' + name[i] + '-' + str(username[i]) + ' 今日已上报'
+                    print(text)
+                    adminString.append(text + '\n')
+                    # print(userEmail[i])
+                    # send_rusult(text, userEmail[i])
+                    reported += 1
             # 增大等待间隔，github访问速度慢
             time.sleep(random.randint(10, 40))
             # time.sleep(random.randint(1, 10))
