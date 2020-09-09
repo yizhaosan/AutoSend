@@ -67,7 +67,7 @@ def login(s, headers, username, password):
     data['password'] = password
     r = s.post(url=login_url, headers=headers, data=data)
     # 增加等待时间，让数据接收完毕
-    time.sleep(5)
+    time.sleep(20)
     return r.text
 
 
@@ -86,7 +86,7 @@ def get_success_send_info(s, headers):
     success_send_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/main.do'
     r = s.get(url=success_send_info_url, headers=headers)
     # print(r.text)
-    time.sleep(20)
+    time.sleep(30)
     return r.text
 
 
@@ -152,7 +152,7 @@ def sent_info(s, headers, data):
     r = s.post(url=sent_info_url, headers=headers, data=data)
     # print(r.text)
     # 增加等待时间，让数据接收完毕
-    time.sleep(20)
+    time.sleep(30)
     print(r.status_code)
 
 
@@ -265,7 +265,7 @@ def main():
             # print('userString:---------  : ', userString)
             userString.clear()
             # 增大等待间隔，github访问速度慢
-            time.sleep(random.randint(10, 40))
+            time.sleep(random.randint(20, 50))
             # time.sleep(random.randint(1, 10))
     finally:
         text = '应报:' + str(sum) + ' 本次上报:' + str(finished) + ' 今日已上报:' + str(reported)
