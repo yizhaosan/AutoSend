@@ -158,6 +158,9 @@ def sent_info(s, headers, data):
 
 # 发邮件通知结果
 def send_rusult(text, userEmail):
+    if userEmail == 'null':
+        print('用户指定不发送邮件')
+        return
     # nowtime = datetime.datetime.now().strftime('%m-%d')
     msg_from = '2316453754@qq.com'  # 发送邮箱
     passwd = 'yrtorlthsiwuebgh'  # 密码
