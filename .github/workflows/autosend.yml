@@ -41,4 +41,4 @@ jobs:
         fromEmail: ${{ secrets.FROMEMAIL }}
         pop3Key: ${{ secrets.POP3KEY }}
       run: |
-        python send.py -f fromEmail -k pop3Key
+        python send.py -f "$fromEmail" -k "$pop3Key"

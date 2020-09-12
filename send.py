@@ -180,7 +180,7 @@ def send_rusult(text, fromEmail, passworld, userEmail):
     msg['To'] = msg_to
 
     # print(text)
-    print('msg_from: ', msg_from)
+    print('fromEmail: ', fromEmail)
     print('passworld: ', passworld)
 
     s = smtplib.SMTP_SSL("smtp.qq.com", 465)
@@ -276,6 +276,7 @@ def main(argv):
                 text = '用户 ' + str(name[i]) + str(username[i]) + '登录成功'
                 userString.append(text)
                 adminString.append(text)
+                send_rusult('\n'.join(userString), fromEmail, pop3Key, userEmail[i])
             else:
                 print('用户', name[i], username[i], '密码错误，登录失败')
                 # 记录用户登录失败，添加到userString和adminString
