@@ -10,7 +10,7 @@ import sys
 import getopt
 
 
-# 从xlsx文件中读取数据
+# 从xlsx文件中读取数据，未使用
 def get_info_from_xlsx():
     username = []
     password = []
@@ -178,10 +178,6 @@ def send_rusult(text, fromEmail, passworld, userEmail):
     msg['Subject'] = subject
     msg['From'] = msg_from
     msg['To'] = msg_to
-
-    # print(text)
-    print('fromEmail: ', fromEmail)
-    print('passworld: ', passworld)
 
     s = smtplib.SMTP_SSL("smtp.qq.com", 465)
     s.login(msg_from, passwd)

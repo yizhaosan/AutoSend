@@ -4,6 +4,7 @@
 name: Python AutoSendSafe
 
 on:
+  # 发生push或PR事件会触发Actions
   push:
     branches: [ master ]
   pull_request:
@@ -11,7 +12,7 @@ on:
   # 国际标准时间21点，即北京时间第二天早上5点
   # 国际标准时间每天20:12、22:12，即北京时间第二天早上4:12、6:12
   schedule:
-    # - cron: '0 21 * * *'
+     # - cron: '0 21 * * *'
      - cron: '12 20-23/2 * * *'
 
 jobs:
@@ -37,6 +38,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     # 运行脚本
     - name: Run
+      # 使用Secrets隔离敏感信息，发送方邮箱和POP3授权码
       env:
         fromEmail: ${{ secrets.FROMEMAIL }}
         pop3Key: ${{ secrets.POP3KEY }}
