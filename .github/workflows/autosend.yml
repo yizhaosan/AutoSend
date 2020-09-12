@@ -35,13 +35,10 @@ jobs:
         python -m pip install --upgrade pip
         # 从requirements.txt文件中安装依赖
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    # 获取源码
-#     - name: actions/checkout
-#       uses: actions/checkout@master
     # 运行脚本
     - name: Run
       env:
-        fromEmail: ${{secrets.FROMEMAIL}}
-        pop3Key: ${{secrets.POP3KEY}}
+        fromEmail: ${{ secrets.FROMEMAIL }}
+        pop3Key: ${{ secrets.POP3KEY }}
       run: |
         python send.py -f fromEmail -k pop3Key

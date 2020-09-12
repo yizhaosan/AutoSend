@@ -165,9 +165,9 @@ def send_rusult(text, fromEmail, passworld, userEmail):
         print('用户指定不发送邮件')
         return
     # nowtime = datetime.datetime.now().strftime('%m-%d')
-    # msg_from = '2316453754@qq.com'  # 发送邮箱
+    # msg_from = ''  # 发送邮箱
     msg_from = fromEmail
-    # passwd = 'yrtorlthsiwuebgh'  # 密码
+    # passwd = ''  # 密码
     passwd = passworld
     msg_to = userEmail  # 目的邮箱
 
@@ -180,6 +180,8 @@ def send_rusult(text, fromEmail, passworld, userEmail):
     msg['To'] = msg_to
 
     # print(text)
+    print('msg_from: ', msg_from)
+    print('passworld: ', passworld)
 
     s = smtplib.SMTP_SSL("smtp.qq.com", 465)
     s.login(msg_from, passwd)
