@@ -6,6 +6,8 @@ import datetime
 from email.mime.text import MIMEText
 import smtplib
 import random
+import sys
+import getopt
 
 
 # 从xlsx文件中读取数据
@@ -112,6 +114,7 @@ def student_info_parse(html):
         'sfzy': bs.find(attrs={'name': 'sfzy'})['value'],
         # 是否隔离
         'sfgl': bs.find(attrs={'name': 'sfgl'})['value'],
+        # 状态，statusName: "正常"
         'status': bs.find(attrs={'name': 'status'})['value'],
         'sfgr': bs.find(attrs={'name': 'sfgr'})['value'],
         'szdz': bs.find(attrs={'name': 'szdz'})['value'],
@@ -157,13 +160,15 @@ def sent_info(s, headers, data):
 
 
 # 发邮件通知结果
-def send_rusult(text, userEmail):
+def send_rusult(text, fromEmail, passworld, userEmail):
     if userEmail == 'null':
         print('用户指定不发送邮件')
         return
     # nowtime = datetime.datetime.now().strftime('%m-%d')
-    msg_from = '2316453754@qq.com'  # 发送邮箱
-    passwd = 'yrtorlthsiwuebgh'  # 密码
+    # msg_from = '2316453754@qq.com'  # 发送邮箱
+    msg_from = fromEmail
+    # passwd = 'yrtorlthsiwuebgh'  # 密码
+    passwd = passworld
     msg_to = userEmail  # 目的邮箱
 
     subject = '安全上报结果'
@@ -183,7 +188,59 @@ def send_rusult(text, userEmail):
     s.quit()
 
 
-def main():
+def parse_options(argv):
+    fromEmail = ''
+    pop3Key = ''
+    helpMsg = "send.py\n" \
+              "\tsend.py -f <fromEmail> -k <pop3Key>\n" \
+              "\t-f\t\t\t\t邮件发送方邮箱地址\n" \
+              "\t--fromEmail\n" \
+              "\t-k\t\t\t\t邮箱POP3授权码\n" \
+              "\t--pop3Key\n" \
+              "\t-h\t\t\t\thelp\n" \
+              "\t--help\n"
+
+    if not ((('-f' in argv) or ('--fromEmail' in argv)) and (('-k' in argv) or ('--pop3Key' in argv))):
+        print(helpMsg)
+        sys.exit()
+
+    argc = 0
+    if ('-h' in argv) or ('--help' in argv):
+        argc += 1
+    if ('-f' in argv) or ('--fromEmail' in argv):
+        argc += 2
+    if ('-f' in argv) or ('--fromEmail' in argv):
+        argc += 2
+    if len(argv) != argc:
+        print(helpMsg)
+        sys.exit()
+
+    try:
+        opts, args = getopt.getopt(argv, "hf:k:", ["help", "fromEmail=", "pop3Key="])
+    except getopt.GetoptError:
+        print(helpMsg)
+        sys.exit(2)
+
+    if not len(opts):
+        print(helpMsg)
+        sys.exit()
+
+    for option, value in opts:
+        if option in ("-h", "--help"):
+            print(helpMsg)
+        elif option in ("-f", "--fromEmail"):
+            if value is None:
+                sys.exit()
+            fromEmail = value
+        elif option in ("-k", "--pop3Key"):
+            if value is None:
+                sys.exit()
+            pop3Key = value
+    return fromEmail, pop3Key
+
+
+def main(argv):
+    fromEmail, pop3Key = parse_options(argv)
     username, password, userEmail, name, sum = get_info_from_txt()
     # username, password, userEmail, sum = get_info_from_xlsx()
     print('---------------------------')
@@ -224,7 +281,7 @@ def main():
                 userString.append(text)
                 adminString.append(text)
                 # 将登录失败信息 邮件发送给用户
-                send_rusult('\n'.join(userString), userEmail[i])
+                send_rusult('\n'.join(userString), fromEmail, pop3Key, userEmail[i])
                 # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
                 # print('userString:---------  : ', userString)
                 userString.clear()
@@ -245,7 +302,7 @@ def main():
                     # print(userEmail[i])
                     # send_rusult(text, userEmail[i])
                     # 将用户上报成功信息，邮件发送给用户
-                    send_rusult('\n'.join(userString), userEmail[i])
+                    send_rusult('\n'.join(userString), fromEmail, pop3Key, userEmail[i])
                     # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
                     # print('userString:---------  : ', userString)
                     userString.clear()
@@ -279,7 +336,7 @@ def main():
         print('---------------------------')
         print(text)
         # send_rusult(text, 'yizhaosan@qq.com')
-        send_rusult('\n'.join(adminString), 'yizhaosan@qq.com')
+        send_rusult('\n'.join(adminString), fromEmail, pop3Key, 'yizhaosan@qq.com')
         print('---------------------------\n')
         # 调用clear()方法，清空列表，避免其出现在下次的邮件中
         # print('adminString:---------  : ', adminString)
@@ -287,4 +344,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
