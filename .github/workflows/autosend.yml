@@ -40,7 +40,8 @@ jobs:
 #       uses: actions/checkout@master
     # 运行脚本
     - name: Run
-      run: |
+      env:
         fromEmail: ${{secrets.FROMEMAIL}}
         pop3Key: ${{secrets.POP3KEY}}
+      run: |
         python send.py -f fromEmail -k pop3Key
