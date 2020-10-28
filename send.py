@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -61,22 +63,52 @@ def get_info_from_txt():
 # 登录，为后续做准备
 def login(s, headers, username, password):
     login_url = 'http://yiqing.ctgu.edu.cn/wx/index/loginSubmit.do'
-    data = {
-        'username': '',
-        'password': '',
-    }
-    data['username'] = username
-    data['password'] = password
+    data: Dict[str, Any] = {'username': username, 'password': password}
     r = s.post(url=login_url, headers=headers, data=data)
     # 增加等待时间，让数据接收完毕
     time.sleep(20)
     return r.text
 
 
+# 获取用户当前角色data的html
+def get_user_info(s, headers):
+    user_info_url = 'http://yiqing.ctgu.edu.cn/wx/index/my.do'
+    r = s.get(url=user_info_url, headers=headers)
+    # print(r.text)
+    # 增加等待时间，让数据接收完毕
+    time.sleep(20)
+    return r.text
+
+
+# 解析html，判断当前是否是普通用户
+def user_info_parse(html):
+    bs = BeautifulSoup(html, 'lxml')
+    try:
+        text1 = bs.find('button', {"class": "submit-btn bg-white fc-blue"}).get_text()
+        text2 = bs.find('button', {"class": "submit-btn bg-white fc-black"}).get_text()
+        if (text1 == '切换角色') & (text2 == '退出登录'):
+            result = 'admin'
+        return result
+    except AttributeError:
+        text3 = bs.find('button', {"class": "submit-btn bg-white fc-black"}).get_text()
+        if text3 == '退出登录':
+            result = 'student'
+        return result
+
+
 # 获取要带有data的html
-def get_student_info(s, headers):
-    student_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/toApply.do'
-    r = s.get(url=student_info_url, headers=headers)
+def get_student_info(s, headers, username, password, role):
+    if role == 'student':
+        student_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/toApply.do'
+        r = s.get(url=student_info_url, headers=headers)
+    if role == 'admin':
+        login_url = 'http://yiqing.ctgu.edu.cn/wx/index/loginSubmit.do'
+        data: Dict[str, Any] = {'username': username, 'password': password}
+        r = s.post(url=login_url, headers=headers, data=data)
+        change_role_url = 'http://yiqing.ctgu.edu.cn/home/changeRole.do?current_roleid=student'
+        r = s.get(url=change_role_url, headers=headers)
+        student_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/toApply.do'
+        r = s.get(url=student_info_url, headers=headers)
     # print(r.text)
     # 增加等待时间，让数据接收完毕
     time.sleep(20)
@@ -84,9 +116,18 @@ def get_student_info(s, headers):
 
 
 # 获取上报成功的html
-def get_success_send_info(s, headers):
-    success_send_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/main.do'
-    r = s.get(url=success_send_info_url, headers=headers)
+def get_success_send_info(s, headers, username, password, role):
+    if role == 'student':
+        success_send_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/main.do'
+        r = s.get(url=success_send_info_url, headers=headers)
+    if role == 'admin':
+        login_url = 'http://yiqing.ctgu.edu.cn/wx/index/loginSubmit.do'
+        data: Dict[str, Any] = {'username': username, 'password': password}
+        r = s.post(url=login_url, headers=headers, data=data)
+        change_role_url = 'http://yiqing.ctgu.edu.cn/home/changeRole.do?current_roleid=student'
+        r = s.get(url=change_role_url, headers=headers)
+        success_send_info_url = 'http://yiqing.ctgu.edu.cn/wx/health/main.do'
+        r = s.get(url=success_send_info_url, headers=headers)
     # print(r.text)
     time.sleep(30)
     return r.text
@@ -284,12 +325,14 @@ def main(argv):
                 # print('userString:---------  : ', userString)
                 userString.clear()
                 continue
-            html = get_student_info(s, headers)
+            html = get_user_info(s, headers)
+            role = user_info_parse(html)
+            html = get_student_info(s, headers, username, password, role)
             try:
                 data = student_info_parse(html)
                 sent_info(s, headers, data)
                 # 从网页中解析是否上报成功
-                html = get_success_send_info(s, headers)
+                html = get_success_send_info(s, headers, username, password, role)
                 msg = success_send_info_parse(html)
                 if msg == '今日已上报':
                     # 记录用户上报成功，添加到userString和adminString
@@ -309,7 +352,7 @@ def main(argv):
                     finished += 1
             except:
                 # 从网页中解析是否上报成功
-                html = get_success_send_info(s, headers)
+                html = get_success_send_info(s, headers, username, password, role)
                 msg = success_send_info_parse(html)
                 if msg == '今日已上报':
                     text = '用户 ' + name[i] + '-' + str(username[i]) + ' 今日已上报'
