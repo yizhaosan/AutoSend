@@ -5,6 +5,7 @@ import time
 import datetime
 import smtplib
 import random
+import pytz
 from bs4 import BeautifulSoup
 from email.mime.text import MIMEText
 
@@ -117,14 +118,14 @@ def send_result(text, fromEmail, passWorld, userEmail):
     if userEmail == 'null':
         print('用户指定不发送邮件')
         return
-    nowtime = datetime.datetime.now().strftime('%Y-%m-%d')
+    nowServerTime = datetime.datetime.now().strftime('%Y-%m-%d')
+    nowTime = datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d')
     msg_from = fromEmail
     passwd = passWorld
     msg_to = userEmail  # 目的邮箱
 
     subject = '安全上报结果'
-    content = nowtime + '\n' + text
-    # content = text
+    content = '服务器当前时间：' + nowServerTime + '\n' + '东八区当前时间：' + nowTime + '\n' + text
     msg = MIMEText(content)
     msg['Subject'] = subject
     msg['From'] = msg_from
@@ -193,7 +194,7 @@ def main(argv):
     fromEmail, pop3Key = parse_options(argv)
     username, password, userEmail, name, sum = get_info_from_txt()
     print('---------------------------')
-    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    print(datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S'))
     print('账号密码读取成功，共', sum, '人')
     print('---------------------------')
     finished = 0
@@ -204,7 +205,7 @@ def main(argv):
     adminString = []
 
     adminString.append('---------------------------')
-    adminString.append(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    adminString.append(datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S'))
     adminString.append('账号密码读取成功，共' + str(sum) + '人')
     adminString.append('---------------------------')
     try:
@@ -215,8 +216,8 @@ def main(argv):
             }
             s = requests.Session()
             state = login(s, headers, username[i], password[i])
-            print('No.' + str(i+1) + '  ' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-            adminString.append('No.' + str(i+1) + '  ' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            print('No.' + str(i+1) + '  ' + datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S'))
+            adminString.append('No.' + str(i+1) + '  ' + datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S'))
             if state == 'success':
                 print('用户', name[i], username[i], '登录成功')
                 # 记录用户登录成功，添加到userString和adminString
@@ -227,8 +228,8 @@ def main(argv):
                 print('用户', name[i], username[i], '密码错误，登录失败')
                 # 记录用户登录失败，添加到userString和adminString
                 text = '用户 ' + str(name[i]) + str(username[i]) + '密码错误，登录失败'
-                userString.append(text)
-                adminString.append(text)
+                userString.append(text + '\n')
+                adminString.append(text + '\n')
                 # 将登录失败信息 邮件发送给用户
                 # send_result('\n'.join(userString), fromEmail, pop3Key, userEmail[i])
                 # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
