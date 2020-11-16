@@ -45,14 +45,18 @@ def send_result(text, fromEmail, passWorld, userEmail):
     if userEmail == 'null':
         print('用户指定不发送邮件')
         return
-    nowServerTime = datetime.datetime.now().strftime('%Y-%m-%d')
-    nowTime = datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d')
+    # 服务器当前时间
+    nowServerTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    # 东八区，即中国当前时间PRC
+    nowTime = datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S')
+
     msg_from = fromEmail
     passwd = passWorld
     msg_to = userEmail  # 目的邮箱
 
     subject = '安全上报结果'
-    content = '服务器当前时间：' + nowServerTime + '\n' + '东八区当前时间：' + nowTime + '\n' + text
+    # content = '服务器当前时间：' + nowServerTime + '\n' + '东八区当前时间：' + nowTime + '\n' + text
+    content = nowTime + '\n' + text
     msg = MIMEText(content)
     msg['Subject'] = subject
     msg['From'] = msg_from
@@ -124,6 +128,9 @@ def main(argv):
     username, password, userEmail, name, sum = get_info_from_txt()
 
     print('---------------------------')
+    # 服务器当前时间
+    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 中国地区当前时间，PRC
     print(datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S'))
     print('账号密码读取成功，共', sum, '人')
     print('---------------------------')
@@ -136,6 +143,11 @@ def main(argv):
     userString = []
     # 发送给admin的邮件信息
     adminString = []
+
+    nowServerTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    nowTime = datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S')
+    content = '服务器当前时间：' + nowServerTime + '\n' + '东八区当前时间：' + nowTime + '\n'
+    adminString.append(content)
 
     adminString.append('---------------------------')
     adminString.append(datetime.datetime.now(pytz.timezone('PRC')).strftime('%Y-%m-%d %H:%M:%S'))
