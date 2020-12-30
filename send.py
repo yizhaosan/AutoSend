@@ -1,15 +1,14 @@
+import getopt
+import random
+import smtplib
+import sys
+import time
+from email.mime.text import MIMEText
 from typing import Dict, Any
 
 import requests
-import time
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
-import datetime
-from email.mime.text import MIMEText
-import smtplib
-import random
-import sys
-import getopt
 
 
 # 从xlsx文件中读取数据，未使用
