@@ -235,7 +235,7 @@ def main(argv):
             if state == 'success':
                 print('用户', name[i], username[i], '登录成功')
                 # 记录用户登录成功，添加到userString和adminString
-                text = '用户 ' + str(name[i]) + str(username[i]) + '登录成功'
+                text = '用户 ' + str(name[i]) + '-' + str(username[i]) + '登录成功'
                 userString.append(text)
                 adminString.append(text)
             else:
