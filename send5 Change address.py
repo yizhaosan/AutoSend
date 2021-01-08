@@ -151,14 +151,13 @@ def main(argv):
             userString.append(text)
             adminString.append(text + '\n')
 
-
             text = '    由于代码使用GitHub Action功能来运行，' \
                    '服务器位于国外，加上学校安全上报网站服务器不稳定，' \
-                   '存在上报失败的情况，还请大家谅解。'\
-                    + '\n' + \
+                   '存在上报失败的情况，还请大家谅解。' \
+                   + '\n' + \
                    '    近期大家陆续都已离校，故上报信息中大家的所在地需要修改。' \
                    '只需要进入上报界面修改最近一天的位置信息，重新提交一次即可。' \
-                    + '\n' + \
+                   + '\n' + \
                    '    上报网址：http://yiqing.ctgu.edu.cn/ '
 
             userString.append(text)
@@ -172,7 +171,7 @@ def main(argv):
         # 调用clear()方法，清空列表，避免其出现在下一个用户的邮件中
         userString.clear()
         # 增大等待间隔，github访问速度慢
-        time.sleep(random.random())
+        time.sleep(random.random(10, 20))
 
     finally:
         text = '应发送:' + str(sum) + ' 本次发送:' + str(reported)
@@ -187,6 +186,7 @@ def main(argv):
         # 调用clear()方法，清空列表，避免其出现在下次的邮件中
         # print('adminString:---------  : ', adminString)
         adminString.clear()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
