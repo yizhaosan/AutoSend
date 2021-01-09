@@ -261,16 +261,16 @@ def main(argv):
                 userString.append(text)
                 adminString.append(text + '\n')
 
-                text = '\n' + \
-                       '    由于代码使用GitHub Action功能来运行，' \
-                       '服务器位于国外，加上学校安全上报网站服务器不稳定，' \
-                       '存在上报失败的情况，还请大家谅解。' \
-                       + '\n' + \
-                       '    近期大家陆续都已离校，故上报信息中大家的所在地需要修改。' \
-                       '只需要进入上报界面修改最近一天的位置信息，重新提交一次即可。' \
-                       + '\n' + \
-                       '    上报网址：http://yiqing.ctgu.edu.cn/ '
-                userString.append(text)
+                # text = '\n' + \
+                #        '    由于代码使用GitHub Action功能来运行，' \
+                #        '服务器位于国外，加上学校安全上报网站服务器不稳定，' \
+                #        '存在上报失败的情况，还请大家谅解。' \
+                #        + '\n' + \
+                #        '    近期大家陆续都已离校，故上报信息中大家的所在地需要修改。' \
+                #        '只需要进入上报界面修改最近一天的位置信息，重新提交一次即可。' \
+                #        + '\n' + \
+                #        '    上报网址：http://yiqing.ctgu.edu.cn/ '
+                # userString.append(text)
 
                 # 将用户上报成功信息，邮件发送给用户
                 send_result('\n'.join(userString), fromEmail, pop3Key, userEmail[i])
