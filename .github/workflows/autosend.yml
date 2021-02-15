@@ -11,9 +11,9 @@ on:
     branches: [ master ]
   # 国际标准时间21点，即北京时间第二天早上5点
   # 国际标准时间每天18:12、20:12，即北京时间第二天早上2:12、4:12
-#   schedule:
-#      # - cron: '0 21 * * *'
-#      - cron: '12 18-21/2 * * *'
+    schedule:
+      # - cron: '0 21 * * *'
+        - cron: '12 18-21/2 * * *'
 
 jobs:
   install_dependencies_and_autosend:
